@@ -94,6 +94,13 @@ namespace SampleApp.Security
             return claims;
         }
 
-
+        public async Task RevokeRefreshToken(string token)
+        {
+            var refreshToken = await _refreshTokenReponsitory.FirstOrDefaultAsync(x => x.Token == token);
+            if (refreshToken != null)
+            {
+                await _refreshTokenReponsitory.Delete(refreshToken);
+            }
+        }
     }
 }

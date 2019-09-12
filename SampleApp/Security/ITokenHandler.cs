@@ -10,5 +10,6 @@ namespace SampleApp.Security
     {
         Task<AccessToken> CreateAccessToken(User user);
         Task<RefreshToken> TakeRefreshToken(string token);
+        Task RevokeRefreshToken(string token);
     }
 }

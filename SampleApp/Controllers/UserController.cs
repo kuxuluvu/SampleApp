@@ -85,7 +85,11 @@ namespace SampleApp.Controllers
             return BadRequest("Invalid view model");
         }
 
-
+        /// <summary>
+        /// Refresh Token
+        /// </summary>
+        /// <param name="refreshToken"></param>
+        /// <returns></returns>
         [Route("refresh")]
         [HttpPost]
         public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
@@ -109,6 +113,23 @@ namespace SampleApp.Controllers
             };
 
             return Ok(response);
+        }
+        /// <summary>
+        /// Revoke Token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [Route("revoke")]
+        [HttpPost]
+        public async Task<IActionResult> RevokeToken([FromBody] string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _userServices.RevokeRefreshToken(token);
+            return NoContent();
         }
     }
 }

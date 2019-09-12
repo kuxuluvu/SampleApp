@@ -80,7 +80,7 @@ namespace SampleApp.Services
 
             var token = await _tokenHandler.TakeRefreshToken(refreshToken);
 
-            if(token == null)
+            if (token == null)
             {
                 return response;
             }
@@ -142,6 +142,11 @@ namespace SampleApp.Services
             await _userReponsitory.Add(newUser);
 
             return user;
+        }
+
+        public async Task RevokeRefreshToken(string token)
+        {
+            await _tokenHandler.RevokeRefreshToken(token);
         }
     }
 }

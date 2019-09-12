@@ -14,5 +14,6 @@ namespace SampleApp.Services
         Task<UserViewModel> Register(UserViewModel user);
         Task<AccessToken> Authentication(LoginViewModel model);
         Task<TokenResponseModel> RefreshToken(string refreshToken);
+        Task RevokeRefreshToken(string token);
     }
 }
