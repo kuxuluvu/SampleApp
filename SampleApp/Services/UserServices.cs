@@ -91,14 +91,6 @@ namespace SampleApp.Services
                 return response;
             }
 
-            //var user = await _userReponsitory.FirstOrDefaultAsync(x => x.Username == userName &&
-            //                        x.IsActive && !x.IsDeleted);
-            //if(user == null)
-            //{
-            //    response.ErrorMessage = "Invalid refresh token";
-            //    return response;
-            //}
-
             var accessToken = await _tokenHandler.CreateAccessToken(token.User);
 
             response.IsSucces = true;
@@ -139,7 +131,7 @@ namespace SampleApp.Services
             newUser.Salt = salt;
             newUser.Password = hashPassword;
 
-            await _userReponsitory.Add(newUser);
+            await _userReponsitory.AddAsync(newUser);
 
             return user;
         }

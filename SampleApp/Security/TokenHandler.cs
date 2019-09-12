@@ -34,7 +34,7 @@ namespace SampleApp.Security
             }
 
             refreshToken.Id = Guid.NewGuid();
-            await _refreshTokenReponsitory.Add(refreshToken);
+            await _refreshTokenReponsitory.AddAsync(refreshToken);
 
             return accessToken;
         }
@@ -46,7 +46,7 @@ namespace SampleApp.Security
             var refreshToken = await _refreshTokenReponsitory.FirstOrDefaultAsync(x => x.Token == token);
             if (refreshToken != null)
             {
-                await _refreshTokenReponsitory.Delete(refreshToken);
+                await _refreshTokenReponsitory.DeleteAsync(refreshToken);
             }
 
             return refreshToken;
@@ -99,7 +99,7 @@ namespace SampleApp.Security
             var refreshToken = await _refreshTokenReponsitory.FirstOrDefaultAsync(x => x.Token == token);
             if (refreshToken != null)
             {
-                await _refreshTokenReponsitory.Delete(refreshToken);
+                await _refreshTokenReponsitory.DeleteAsync(refreshToken);
             }
         }
     }

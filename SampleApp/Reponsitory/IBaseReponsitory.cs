@@ -10,13 +10,13 @@ namespace SampleApp.Reponsitory
     {
         IQueryable<T> GetAll();
 
-        Task Add(T entity);
+        Task AddAsync(T entity);
 
-        Task Delete(T entity);
+        Task DeleteAsync(T entity);
 
-        Task Update(T entity);
+        Task UpdateAsync(T entity);
 
-        Task<T> Get(Guid id);
+        Task<T> GetByIdAsync(Guid id);
 
         IQueryable<T> Query(Expression<Func<T, bool>> predicate);
 
