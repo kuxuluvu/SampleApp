@@ -92,9 +92,9 @@ namespace SampleApp.Controllers
         /// <returns></returns>
         [Route("refresh")]
         [HttpPost]
-        public async Task<IActionResult> RefreshToken([FromBody] string refreshToken)
+        public async Task<IActionResult> RefreshToken(string refreshToken)
         {
-            if (!string.IsNullOrEmpty(refreshToken))
+            if (string.IsNullOrEmpty(refreshToken))
             {
                 return BadRequest(ModelState);
             }

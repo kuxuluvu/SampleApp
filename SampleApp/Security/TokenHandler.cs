@@ -34,6 +34,7 @@ namespace SampleApp.Security
             }
 
             refreshToken.Id = Guid.NewGuid();
+            refreshToken.UserId = user.Id;
             await _refreshTokenReponsitory.AddAsync(refreshToken);
 
             return accessToken;

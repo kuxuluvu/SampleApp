@@ -10,6 +10,6 @@ namespace SampleApp.ViewModels
     {
         public bool IsSucces { get; set; }
         public string ErrorMessage { get; set; }
-        public AccessToken AccessToken { get; set; }
+        public AccessTokenViewModel AccessToken { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace SampleApp.Services
     {
         Task<IEnumerable<UserViewModel>> GetUsers();
         Task<UserViewModel> Register(UserViewModel user);
-        Task<AccessToken> Authentication(LoginViewModel model);
+        Task<AccessTokenViewModel> Authentication(LoginViewModel model);
         Task<TokenResponseModel> RefreshToken(string refreshToken);
         Task RevokeRefreshToken(string token);
     }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using SampleApp.Models;
+using SampleApp.Security;
 using SampleApp.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,10 @@ namespace SampleApp.Configs
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(o => string.Empty));
 
             CreateMap<UserViewModel, User>();
+            CreateMap<RefreshTokenViewModel, RefreshToken>();
+            CreateMap<RefreshToken, RefreshTokenViewModel>();
+            CreateMap<AccessTokenViewModel, AccessToken>();
+            CreateMap<AccessToken, AccessTokenViewModel>();
         }
     }
 }

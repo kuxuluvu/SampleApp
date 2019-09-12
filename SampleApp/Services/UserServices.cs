@@ -50,7 +50,7 @@ namespace SampleApp.Services
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        public async Task<AccessToken> Authentication(LoginViewModel model)
+        public async Task<AccessTokenViewModel> Authentication(LoginViewModel model)
         {
             var user = await _userReponsitory.FirstOrDefaultAsync(x => x.Username == model.Username && !x.IsDeleted && x.IsActive);
 
@@ -63,7 +63,7 @@ namespace SampleApp.Services
                 {
                     var token = await _tokenHandler.CreateAccessToken(user);
 
-                    return token;
+                    return _mapper.Map<AccessToken, AccessTokenViewModel>(token);
                 }
             }
 
@@ -90,12 +90,12 @@ namespace SampleApp.Services
                 response.ErrorMessage = "Expired refresh token.";
                 return response;
             }
-
-            var accessToken = await _tokenHandler.CreateAccessToken(token.User);
+            var user = await _userReponsitory.FirstOrDefaultAsync(x=>x.Id == token.UserId);
+            var accessToken = await _tokenHandler.CreateAccessToken(user);
 
             response.IsSucces = true;
             response.ErrorMessage = null;
-            response.AccessToken = accessToken;
+            response.AccessToken = _mapper.Map<AccessToken, AccessTokenViewModel>(accessToken);
 
             return response;
         }
