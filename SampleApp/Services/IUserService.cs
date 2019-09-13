@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 
 namespace SampleApp.Services
 {
-    public interface IUserServices
+    public interface IUserService
     {
-        Task<IEnumerable<UserViewModel>> GetUsers();
+        Task<ListResponseViewModel> GetUsers(UserParameterModel model);
         Task<UserViewModel> Register(UserViewModel user);
-        Task<AccessTokenViewModel> Authentication(LoginViewModel model);
-        Task<TokenResponseModel> RefreshToken(string refreshToken);
-        Task RevokeRefreshToken(string token);
+        Task<bool> Update(UserViewModel user);
+        Task<bool> Delete(string userName);
+        Task<bool> Delete(Guid userId);
+        Task<User> GetUserById(Guid userId);
     }
 }

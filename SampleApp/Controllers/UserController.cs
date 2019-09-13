@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SampleApp.Models;
 using SampleApp.Services;
 using SampleApp.ViewModels;
 
@@ -11,22 +14,26 @@ namespace SampleApp.Controllers
 {
     [Produces("application/json")]
     [Route("api/User")]
+    [Authorize]
     public class UserController : Controller
     {
-        private readonly IUserServices _userServices;
+        private readonly IMapper _mapper;
+        private readonly IUserService _userServices;
 
-        public UserController(IUserServices userServices)
+        public UserController(IMapper mapper, IUserService userServices)
         {
+            _mapper = mapper;
             _userServices = userServices;
         }
+
         /// <summary>
-        /// Register
+        /// Create user
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
         [HttpPost]
-        [Route("Register")]
-        public async Task<ActionResult> Register([FromBody] UserViewModel model)
+        [Route("Create")]
+        public async Task<IActionResult> Create([FromBody] UserViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -53,83 +60,88 @@ namespace SampleApp.Controllers
 
             return BadRequest("Invalid model");
         }
+
         /// <summary>
-        /// Login
+        /// Update user
         /// </summary>
-        /// <param name="viewModel"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
+        [Route("Update")]
         [HttpPost]
-        [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginViewModel viewModel)
+        public async Task<IActionResult> Update([FromBody] UserViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var response = new ResponseModel()
+                var result = await _userServices.Update(model);
+                if (!result)
                 {
-                    IsSucces = false,
-                    Message = "Login failed"
-                };
-
-                var result = await _userServices.Authentication(viewModel);
-
-                if (result != null)
-                {
-                    response.IsSucces = true;
-                    response.Data = result;
-                    response.Message = "Login succesfully";
+                    return BadRequest("Update user failed");
                 }
 
-                return Ok(response);
+                return Ok("Update successfully");
             }
 
-            return BadRequest("Invalid view model");
+            return BadRequest("Invalid model");
         }
 
         /// <summary>
-        /// Refresh Token
+        /// Delete user
         /// </summary>
-        /// <param name="refreshToken"></param>
+        /// <param name="userName"></param>
         /// <returns></returns>
-        [Route("refresh")]
+        [Route("Delete")]
         [HttpPost]
-        public async Task<IActionResult> RefreshToken(string refreshToken)
+        public async Task<IActionResult> Delete(Guid userId)
         {
-            if (string.IsNullOrEmpty(refreshToken))
+            if (ModelState.IsValid && userId != Guid.Empty)
             {
-                return BadRequest(ModelState);
+                var result = await _userServices.Delete(userId);
+                if (!result)
+                {
+                    return BadRequest("Delete user failed");
+                }
+
+                return Ok("Delete user successfully");
             }
-            var result = await _userServices.RefreshToken(refreshToken);
 
-            if (!result.IsSucces)
-            {
-                return BadRequest(result.ErrorMessage);
-            }
-
-            var response = new ResponseModel()
-            {
-                IsSucces = true,
-                Message = "Refresh token successfully",
-                Data = result.AccessToken
-            };
-
-            return Ok(response);
+            return BadRequest("Invalid model");
         }
+
         /// <summary>
-        /// Revoke Token
+        /// Get all user
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="model"></param>
         /// <returns></returns>
-        [Route("revoke")]
         [HttpPost]
-        public async Task<IActionResult> RevokeToken([FromBody] string token)
+        [Route("GetAll")]
+        public async Task<IActionResult> GetAllUser([FromBody] UserParameterModel model)
         {
-            if (string.IsNullOrEmpty(token))
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            await _userServices.RevokeRefreshToken(token);
-            return NoContent();
+            var result = await _userServices.GetUsers(model);
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [Route("Get/{userId}")]
+        public async Task<IActionResult> Get(Guid userId)
+        {
+            if (ModelState.IsValid && userId != Guid.Empty)
+            {
+                var result = await _userServices.GetUserById(userId);
+                if (result == null)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                return Ok(_mapper.Map<User, UserViewModel>(result));
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }

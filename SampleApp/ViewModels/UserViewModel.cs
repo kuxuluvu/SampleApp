@@ -8,6 +8,8 @@ namespace SampleApp.ViewModels
 {
     public class UserViewModel
     {
+        public Guid Id { get; set; }
+
         [MaxLength(50)]
         [MinLength(3)]
         public string Username { get; set; }

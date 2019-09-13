@@ -38,15 +38,13 @@ namespace SampleApp.Reponsitory
 
         public async Task<T> GetByIdAsync(Guid id)
         {
-            return await _context.Set<T>()
-                        .FindAsync(id);
+            return await _context.Set<T>().FindAsync(id);
         }
 
         public IQueryable<T> GetAll()
         {
             return _context.Set<T>();
         }
-
 
         public IQueryable<T> Query(Expression<Func<T, bool>> predicate)
         {
@@ -61,6 +59,16 @@ namespace SampleApp.Reponsitory
             }
 
             return await _context.Set<T>().FirstOrDefaultAsync(predicate);
+        }
+
+        public async Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            if (predicate == null)
+            {
+                return await _context.Set<T>().SingleOrDefaultAsync();
+            }
+
+            return await _context.Set<T>().SingleOrDefaultAsync(predicate);
         }
     }
 }

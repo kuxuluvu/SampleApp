@@ -21,5 +21,7 @@ namespace SampleApp.Reponsitory
         IQueryable<T> Query(Expression<Func<T, bool>> predicate);
 
         Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
+
+        Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
     }
 }

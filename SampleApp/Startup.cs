@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,38 +34,52 @@ namespace SampleApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<SampleContext>(options => 
+            services.AddDbContext<SampleContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SampleConnection")));
 
             services.AddMvc();
 
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(option =>
-                {
-                    option.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "Sample",
-                        ValidAudience = "Sample",
-                        IssuerSigningKey = signingConfigurations.Key,
-                        ClockSkew = TimeSpan.Zero
-                    };
-                });
+            // configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
 
-            services.AddSwaggerGen(c =>
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AppSettings>();
+           
+            services.AddAuthentication(x =>
             {
-                c.SwaggerDoc("v1", new Info
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(option =>
+            {
+                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+                var signingKey = new SymmetricSecurityKey(key);
+                //option.TokenValidationParameters = new TokenValidationParameters()
+                //{
+                //    ValidateAudience = false,
+                //    ValidateIssuer = false,
+                //    ValidateIssuerSigningKey = true,
+                //    //ValidIssuer = "Sample",
+                //    //ValidAudience = "Sample",
+                //    //IssuerSigningKey = signingConfigurations.Key,
+                //    //ClockSkew = TimeSpan.Zero
+                //    IssuerSigningKey = new SymmetricSecurityKey(key)
+                //};
+                option.TokenValidationParameters = new TokenValidationParameters
                 {
-                    Version = "v1",
-                    Title = "Sample API",
-                    Description = "Sample App ASP.NET Core Web API",
-                    TermsOfService = "None",
-                });
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = signingKey,
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero
+                };
             });
+
+            services.AddSwaggerDocumentation();
+
             var mappingConfig = new MapperConfiguration(c =>
             {
                 c.AddProfile(new MappingProfile());
@@ -78,7 +93,8 @@ namespace SampleApp
             services.AddScoped<IUserReponsitory, UserReponsitory>();
             services.AddScoped<IRefreshTokenReponsitory, RefreshTokenReponsitory>();
 
-            services.AddScoped<IUserServices, UserServices>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -89,14 +105,19 @@ namespace SampleApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample API V1");
-            });
+            app.UseCors(x => x
+              .AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
 
+            app.UseMvc();
+            app.UseSwaggerDocumentation();
             app.UseAuthentication();
         }
+    }
+
+    public class AppSettings
+    {
+        public string Secret { get; set; }
     }
 }
