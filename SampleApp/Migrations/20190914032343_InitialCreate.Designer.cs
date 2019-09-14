@@ -11,8 +11,8 @@ using System;
 namespace SampleApp.Migrations
 {
     [DbContext(typeof(SampleContext))]
-    [Migration("20190912092433_add_table_RefreshToken")]
-    partial class add_table_RefreshToken
+    [Migration("20190914032343_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

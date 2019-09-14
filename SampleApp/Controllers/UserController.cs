@@ -126,6 +126,11 @@ namespace SampleApp.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// Get user by id
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("Get/{userId}")]
         public async Task<IActionResult> Get(Guid userId)

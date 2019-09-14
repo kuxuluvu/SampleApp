@@ -9,7 +9,6 @@ namespace SampleApp.ViewModels
     public class UserViewModel
     {
         public Guid Id { get; set; }
-
         [MaxLength(50)]
         [MinLength(3)]
         public string Username { get; set; }
@@ -21,11 +20,8 @@ namespace SampleApp.ViewModels
         public string FirstName { get; set; }
         [Required]
         public string LastName { get; set; }
-        [Required]
         public string Email { get; set; }
-        [Required]
         public string Phone { get; set; }
-        [Required]
         public DateTime DayOfBirth { get; set; }
 
         public string FullName

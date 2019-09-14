@@ -16,14 +16,12 @@ namespace SampleApp.Security
     public class TokenHandler : ITokenHandler
     {
         private SigningConfigurations _signingConfigurations;
-        private readonly AppSettings _appSettings;
         private readonly IRefreshTokenReponsitory _refreshTokenReponsitory;
         public TokenHandler(IRefreshTokenReponsitory refreshTokenReponsitory,
-                SigningConfigurations signingConfigurations, IOptions<AppSettings> appSettings)
+                SigningConfigurations signingConfigurations)
         {
             _refreshTokenReponsitory = refreshTokenReponsitory;
             _signingConfigurations = signingConfigurations;
-            _appSettings = appSettings.Value;
         }
 
         public async Task<AccessToken> CreateAccessToken(User user)
@@ -62,30 +60,18 @@ namespace SampleApp.Security
         {
             var accessTokenExpiration = DateTime.UtcNow.AddMinutes(20);
 
-            //var securityToken = new JwtSecurityToken
-            //(
-            //    issuer: "Sample",
-            //    audience: "Sample",
-            //    claims: GetClaims(user),
-            //    expires: accessTokenExpiration,
-            //    notBefore: DateTime.UtcNow,
-            //    signingCredentials: _signingConfigurations.SigningCredentials
-            //);
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var signingKey = new SymmetricSecurityKey(key);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Id.ToString()),
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(20),
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
-            };
+            var securityToken = new JwtSecurityToken
+            (
+                issuer: "Sample",
+                audience: "Sample",
+                claims: GetClaims(user),
+                expires: accessTokenExpiration,
+                notBefore: DateTime.UtcNow,
+                signingCredentials: _signingConfigurations.SigningCredentials
+            );
 
             var handler = new JwtSecurityTokenHandler();
-            var token = handler.CreateToken(tokenDescriptor);
-            var accessToken = handler.WriteToken(token);
+            var accessToken = handler.WriteToken(securityToken);
 
             return new AccessToken(accessToken, accessTokenExpiration.Ticks, refreshToken);
         }

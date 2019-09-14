@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SampleApp.Configs;
 using SampleApp.Models;
 using SampleApp.Reponsitory;
 using SampleApp.Security;
 using SampleApp.Services;
-using Swashbuckle.AspNetCore.Swagger;
+using System;
 
 namespace SampleApp
 {
@@ -41,40 +34,24 @@ namespace SampleApp
 
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
-            // configure strongly typed settings objects
-            var appSettingsSection = Configuration.GetSection("AppSettings");
-            services.Configure<AppSettings>(appSettingsSection);
 
-            // configure jwt authentication
-            var appSettings = appSettingsSection.Get<AppSettings>();
-           
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(option =>
             {
-                var key = Encoding.ASCII.GetBytes(appSettings.Secret);
-                var signingKey = new SymmetricSecurityKey(key);
-                //option.TokenValidationParameters = new TokenValidationParameters()
-                //{
-                //    ValidateAudience = false,
-                //    ValidateIssuer = false,
-                //    ValidateIssuerSigningKey = true,
-                //    //ValidIssuer = "Sample",
-                //    //ValidAudience = "Sample",
-                //    //IssuerSigningKey = signingConfigurations.Key,
-                //    //ClockSkew = TimeSpan.Zero
-                //    IssuerSigningKey = new SymmetricSecurityKey(key)
-                //};
-                option.TokenValidationParameters = new TokenValidationParameters
+                option.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = signingKey,
-                    ValidateIssuer = false,
                     ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
+                    ValidateIssuer = false,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "Sample",
+                    ValidAudience = "Sample",
+                    IssuerSigningKey = signingConfigurations.Key,
+                    ClockSkew = TimeSpan.Zero,
                 };
             });
 
@@ -105,19 +82,9 @@ namespace SampleApp
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(x => x
-              .AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader());
-
+            app.UseAuthentication();
             app.UseMvc();
             app.UseSwaggerDocumentation();
-            app.UseAuthentication();
         }
-    }
-
-    public class AppSettings
-    {
-        public string Secret { get; set; }
     }
 }
