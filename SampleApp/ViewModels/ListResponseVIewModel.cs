@@ -18,7 +18,7 @@ namespace SampleApp.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName { get => $"{FirstName} {LastName}"; }
-        public DateTime BirthDay { get; set; }
+        public DateTime DayOfBirth { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public bool IsActive { get; set; }

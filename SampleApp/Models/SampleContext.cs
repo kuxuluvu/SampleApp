@@ -18,8 +18,7 @@ namespace SampleApp.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>().ToTable("User");
-            modelBuilder.Entity<RefreshToken>().ToTable("RefreshToken");
+            modelBuilder.Seed();
         }
     }
 }

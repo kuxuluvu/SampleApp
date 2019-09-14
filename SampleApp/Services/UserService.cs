@@ -33,33 +33,43 @@ namespace SampleApp.Services
 
             if (!string.IsNullOrWhiteSpace(model.Search))
             {
-                users = users.Where(x => x.FirstName.Contains(model.Search)
-                    || x.LastName.Contains(model.Search)
-                    || x.Email.Contains(model.Search));
+                users = users.Where(x =>
+                    x.Username.Contains(model.Search) ||
+                    x.FirstName.Contains(model.Search) ||
+                    x.LastName.Contains(model.Search) ||
+                    x.Email.Contains(model.Search));
             }
 
             result.Total = await users.CountAsync();
 
-            switch (model.ColumnSort) // need using linq Helper 
+            switch (model.ColumnSort)
             {
-                case "Name":
-                    users = model.SortBy == "asc" ? users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
+                case "Username":
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.Username) : users.OrderByDescending(x => x.Username);
+                    break;
+
+                case "FullName":
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                                 : users.OrderByDescending(x => x.FirstName).ThenByDescending(x => x.LastName);
                     break;
+
                 case "Phone":
-                    users = model.SortBy == "asc" ? users.OrderBy(x => x.Phone)
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.Phone)
                                                   : users.OrderByDescending(x => x.Phone);
                     break;
-                case "BirthDay":
-                    users = model.SortBy == "asc" ? users.OrderBy(x => x.DayOfBirth)
+
+                case "DayOfBirth":
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.DayOfBirth)
                                                   : users.OrderByDescending(x => x.DayOfBirth);
                     break;
+
                 case "Email":
-                    users = model.SortBy == "asc" ? users.OrderBy(x => x.Email)
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.Email)
                                                   : users.OrderByDescending(x => x.Email);
                     break;
+
                 default:
-                    users = model.SortBy == "asc" ? users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
+                    users = model.OrderBy == "asc" ? users.OrderBy(x => x.FirstName).ThenBy(x => x.LastName)
                               : users.OrderByDescending(x => x.FirstName).ThenByDescending(x => x.LastName);
                     break;
             }
@@ -72,7 +82,7 @@ namespace SampleApp.Services
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Username = x.Username,
-                BirthDay = x.DayOfBirth,
+                DayOfBirth = x.DayOfBirth,
                 Email = x.Email,
                 Phone = x.Phone,
                 IsActive = x.IsActive
