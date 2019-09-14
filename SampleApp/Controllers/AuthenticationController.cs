@@ -84,20 +84,20 @@ namespace SampleApp.Controllers
             return Ok(response);
         }
         /// <summary>
-        /// Revoke Token
+        /// Revoke refreshToken
         /// </summary>
-        /// <param name="token"></param>
+        /// <param name="refreshToken"></param>
         /// <returns></returns>
         [Route("revoke")]
         [HttpPost]
-        public async Task<IActionResult> RevokeToken([FromBody] string token)
+        public async Task<IActionResult> RevokeToken(string refreshToken)
         {
-            if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(refreshToken))
             {
                 return BadRequest(ModelState);
             }
 
-            await _authenticationService.RevokeRefreshToken(token);
+            await _authenticationService.RevokeRefreshToken(refreshToken);
             return NoContent();
         }
     }
