@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using RestSharp;
+using SampleApp.Configs;
 using SampleApp.Helper;
 using SampleApp.Models;
 using SampleApp.Reponsitory;
-using SampleApp.Security;
 using SampleApp.ViewModels;
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SampleApp.Services
 {
@@ -19,10 +21,12 @@ namespace SampleApp.Services
     {
         private readonly IUserReponsitory _userReponsitory;
         private readonly IMapper _mapper;
-        public UserService(IUserReponsitory userReponsitory, IMapper mapper)
+        private readonly AppSettings _appSettings;
+        public UserService(IUserReponsitory userReponsitory, IMapper mapper, IOptions<AppSettings> appSettings)
         {
             _userReponsitory = userReponsitory;
             _mapper = mapper;
+            _appSettings = appSettings.Value;
         }
 
         public async Task<ListResponseViewModel> GetUsers(UserParameterModel model)
@@ -85,6 +89,7 @@ namespace SampleApp.Services
                 DayOfBirth = x.DayOfBirth,
                 Email = x.Email,
                 Phone = x.Phone,
+                ImageUrl = x.ImageUrl,
                 IsActive = x.IsActive
             }).ToListAsync();
 
@@ -162,6 +167,35 @@ namespace SampleApp.Services
         {
             return
                 await _userReponsitory.SingleOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
+        }
+
+        public async Task<ResponseUploadImageModel> UploadImage(IFormFile file)
+        {
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+
+                var client = new RestClient(_appSettings.UrlUpload);
+                var request = new RestRequest(Method.POST);
+                request.AddHeader("cache-control", "no-cache");
+                request.AddHeader("Connection", "keep-alive");
+                request.AddHeader("accept-encoding", "gzip, deflate");
+                request.AddHeader("Cache-Control", "no-cache");
+                request.AddHeader("Accept", "*/*");
+                request.AddHeader("Authorization", "Bearer " + _appSettings.TokenUpload);
+                request.AddHeader("content-type", "multipart/form-data");
+                request.AddParameter("application/octet-stream", stream.ToArray(), ParameterType.RequestBody);
+
+                var response = await client.ExecuteTaskAsync(request);
+                var result = JsonConvert.DeserializeObject<ResponseUploadImageModel>(response.Content);
+
+                return result;
+            }
+        }
+
+        public async Task Update(User user)
+        {
+            await _userReponsitory.UpdateAsync(user);
         }
     }
 }

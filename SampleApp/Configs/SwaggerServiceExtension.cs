@@ -2,10 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SampleApp.Configs
 {
@@ -47,7 +44,7 @@ namespace SampleApp.Configs
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Sample API V1");
-                c.DocumentTitle = "Title Documentation";
+                c.DocumentTitle = "Sample API";
                 c.DocExpansion(DocExpansion.None);
             });
 

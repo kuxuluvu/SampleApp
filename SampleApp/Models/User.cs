@@ -19,6 +19,7 @@ namespace SampleApp.Models
         public string Email { get; set; }
         public string Phone { get; set; }
         public DateTime DayOfBirth { get; set; }
+        public string ImageUrl { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
 

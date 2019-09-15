@@ -1,9 +1,7 @@
-﻿using SampleApp.Models;
-using SampleApp.Security;
+﻿using Microsoft.AspNetCore.Http;
+using SampleApp.Models;
 using SampleApp.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace SampleApp.Services
@@ -16,5 +14,7 @@ namespace SampleApp.Services
         Task<bool> Delete(string userName);
         Task<bool> Delete(Guid userId);
         Task<User> GetUserById(Guid userId);
+        Task<ResponseUploadImageModel> UploadImage(IFormFile file);
+        Task Update(User user);
     }
 }

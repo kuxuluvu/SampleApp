@@ -1,14 +1,10 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using SampleApp.Helper;
+﻿using SampleApp.Helper;
 using SampleApp.Models;
 using SampleApp.Reponsitory;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SampleApp.Security

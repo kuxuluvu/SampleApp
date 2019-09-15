@@ -35,6 +35,9 @@ namespace SampleApp
 
             services.AddMvc();
 
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
             var signingConfigurations = new SigningConfigurations();
             services.AddSingleton(signingConfigurations);
 

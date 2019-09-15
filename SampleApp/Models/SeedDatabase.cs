@@ -1,10 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SampleApp.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace SampleApp.Models
 {

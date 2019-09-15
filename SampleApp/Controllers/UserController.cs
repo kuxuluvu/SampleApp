@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SampleApp.Models;
 using SampleApp.Services;
 using SampleApp.ViewModels;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SampleApp.Controllers
 {
@@ -147,6 +145,44 @@ namespace SampleApp.Controllers
             }
 
             return BadRequest(ModelState);
+        }
+
+        /// <summary>
+        /// Upload image for User
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("UploadImage")]
+        public async Task<IActionResult> UpLoadImage(UploadImageViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest("Invalid model");
+            }
+            try
+            {
+                var user = await _userServices.GetUserById(model.UserId);
+                if (user == null)
+                {
+                    return BadRequest("Upload image failed");
+                }
+
+                var result = await _userServices.UploadImage(model.File);
+
+                if (result != null && result.Status == HttpStatusCode.OK)
+                {
+                    user.ImageUrl = result.Data.Link;
+
+                    await _userServices.Update(user);
+                }
+
+                return Ok(result.Data.Link);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
