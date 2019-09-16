@@ -1,19 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleApp.Services;
+using SampleApp.Services.Interfaces;
 using SampleApp.ViewModels;
 using System.Threading.Tasks;
-
+using SampleApp.Services.DTOs;
 namespace SampleApp.Controllers
 {
     [Produces("application/json")]
     [Route("api/Authentication")]
     public class AuthenticationController : Controller
     {
+        private readonly IMapper _mapper;
         private readonly IAuthenticationService _authenticationService;
 
-        public AuthenticationController(IAuthenticationService authenticationService)
+        public AuthenticationController(IMapper mapper, IAuthenticationService authenticationService)
         {
+            _mapper = mapper;
             _authenticationService = authenticationService;
         }
 
@@ -34,8 +38,8 @@ namespace SampleApp.Controllers
                     IsSucces = false,
                     Message = "Login failed"
                 };
-
-                var result = await _authenticationService.Authentication(viewModel);
+                var modelMapper = _mapper.Map<LoginViewModel, LoginDto>(viewModel);
+                var result = await _authenticationService.Authentication(modelMapper);
 
                 if (result != null)
                 {

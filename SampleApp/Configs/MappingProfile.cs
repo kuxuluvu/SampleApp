@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using SampleApp.Models;
-using SampleApp.Security;
+using SampleApp.Infrastructure.Models;
+using SampleApp.Services.DTOs;
+using SampleApp.Services.Security;
 using SampleApp.ViewModels;
 
 namespace SampleApp.Configs
@@ -9,14 +10,22 @@ namespace SampleApp.Configs
     {
         public MappingProfile()
         {
+            CreateMap<UserDto, UserViewModel>()
+                .ForMember(dest => dest.Password, opt => opt.MapFrom(o => string.Empty));
             CreateMap<User, UserViewModel>()
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(o => string.Empty));
+            CreateMap<UserDto, User>();
+            CreateMap<UserViewModel, UserDto>();
 
-            CreateMap<UserViewModel, User>();
-            CreateMap<RefreshTokenViewModel, RefreshToken>();
-            CreateMap<RefreshToken, RefreshTokenViewModel>();
-            CreateMap<AccessTokenViewModel, AccessToken>();
-            CreateMap<AccessToken, AccessTokenViewModel>();
+            CreateMap<LoginViewModel, LoginDto>();
+            CreateMap<RefreshTokenViewModel, RefreshTokenDto>();
+            CreateMap<RefreshTokenDto, RefreshTokenViewModel>();
+            CreateMap<AccessTokenViewModel, AccessTokenDto>();
+            CreateMap<AccessTokenDto, AccessTokenViewModel>();
+      
+            CreateMap<UserParameterModel, UserParameterDto>();
+            CreateMap<RefreshToken, RefreshTokenDto>();
+            CreateMap<AccessToken, AccessTokenDto>();
         }
     }
 }

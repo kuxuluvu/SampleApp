@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SampleApp.Models;
+using SampleApp.Infrastructure.Models;
 using SampleApp.Services;
+using SampleApp.Services.DTOs;
 using SampleApp.ViewModels;
 using System;
 using System.Net;
@@ -40,8 +41,8 @@ namespace SampleApp.Controllers
                     IsSucces = false,
                     Message = "Register failed"
                 };
-
-                var result = await _userServices.Register(model);
+                var modelMapper = _mapper.Map<UserViewModel, UserDto>(model);
+                var result = await _userServices.Register(modelMapper);
 
                 if (result == null)
                 {
@@ -70,7 +71,8 @@ namespace SampleApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _userServices.Update(model);
+                var modelMapper = _mapper.Map<UserViewModel, UserDto>(model);
+                var result = await _userServices.Update(modelMapper);
                 if (!result)
                 {
                     return BadRequest("Update user failed");
@@ -118,8 +120,8 @@ namespace SampleApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var result = await _userServices.GetUsers(model);
+            var modelMapper = _mapper.Map<UserParameterModel, UserParameterDto>(model);
+            var result = await _userServices.GetUsers(modelMapper);
 
             return Ok(result);
         }

@@ -8,10 +8,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using SampleApp.Configs;
-using SampleApp.Models;
+using SampleApp.Infrastructure;
 using SampleApp.Reponsitory;
+using SampleApp.Reponsitory.Intefaces;
 using SampleApp.Security;
 using SampleApp.Services;
+using SampleApp.Services.DTOs;
+using SampleApp.Services.Implements;
+using SampleApp.Services.Interfaces;
 using System;
 
 namespace SampleApp

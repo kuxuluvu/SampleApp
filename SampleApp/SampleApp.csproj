@@ -5,6 +5,38 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Helper\**" />
+    <Compile Remove="Migrations\**" />
+    <Compile Remove="Models\**" />
+    <Compile Remove="Reponsitory\**" />
+    <Compile Remove="Security\**" />
+    <Compile Remove="Services\**" />
+    <Content Remove="Helper\**" />
+    <Content Remove="Migrations\**" />
+    <Content Remove="Models\**" />
+    <Content Remove="Reponsitory\**" />
+    <Content Remove="Security\**" />
+    <Content Remove="Services\**" />
+    <EmbeddedResource Remove="Helper\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <EmbeddedResource Remove="Reponsitory\**" />
+    <EmbeddedResource Remove="Security\**" />
+    <EmbeddedResource Remove="Services\**" />
+    <None Remove="Helper\**" />
+    <None Remove="Migrations\**" />
+    <None Remove="Models\**" />
+    <None Remove="Reponsitory\**" />
+    <None Remove="Security\**" />
+    <None Remove="Services\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Configs\AppSettings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Helpers\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -20,6 +52,12 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SampleApp.Infrastructure\SampleApp.Infrastructure.csproj" />
+    <ProjectReference Include="..\SampleApp.Reponsitory\SampleApp.Reponsitory.csproj" />
+    <ProjectReference Include="..\SampleApp.Services\SampleApp.Services.csproj" />
   </ItemGroup>
 
 </Project>
