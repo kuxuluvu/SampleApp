@@ -1,4 +1,17 @@
-﻿using AutoMapper;
+﻿// ***********************************************************************
+// Assembly         : SampleApp.Services
+// Author           : duc.nguyen
+// Created          : 09-16-2019
+//
+// Last Modified By : duc.nguyen
+// Last Modified On : 09-16-2019
+// ***********************************************************************
+// <copyright file="UserService.cs" company="SampleApp.Services">
+//     Copyright (c) . All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,11 +29,31 @@ using System.Threading.Tasks;
 
 namespace SampleApp.Services
 {
+    /// <summary>
+    /// Class UserService.
+    /// Implements the <see cref="SampleApp.Services.IUserService" />
+    /// </summary>
+    /// <seealso cref="SampleApp.Services.IUserService" />
     public class UserService : IUserService
     {
+        /// <summary>
+        /// The user reponsitory
+        /// </summary>
         private readonly IUserReponsitory _userReponsitory;
+        /// <summary>
+        /// The mapper
+        /// </summary>
         private readonly IMapper _mapper;
+        /// <summary>
+        /// The application settings
+        /// </summary>
         private readonly AppSettings _appSettings;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserService"/> class.
+        /// </summary>
+        /// <param name="userReponsitory">The user reponsitory.</param>
+        /// <param name="mapper">The mapper.</param>
+        /// <param name="appSettings">The application settings.</param>
         public UserService(IUserReponsitory userReponsitory, IMapper mapper, IOptions<AppSettings> appSettings)
         {
             _userReponsitory = userReponsitory;
@@ -28,6 +61,11 @@ namespace SampleApp.Services
             _appSettings = appSettings.Value;
         }
 
+        /// <summary>
+        /// Gets the users.
+        /// </summary>
+        /// <param name="model">The model.</param>
+        /// <returns>Task&lt;ListResponseViewModel&gt;.</returns>
         public async Task<ListResponseViewModel> GetUsers(UserParameterDto model)
         {
             var result = new ListResponseViewModel();
@@ -95,10 +133,10 @@ namespace SampleApp.Services
             return result;
         }
         /// <summary>
-        /// Login 
+        /// Login
         /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        /// <param name="user">The user.</param>
+        /// <returns>Task&lt;UserDto&gt;.</returns>
         public async Task<UserDto> Register(UserDto user)
         {
             var exist = await _userReponsitory.FirstOrDefaultAsync(x => x.Username == user.Username && !x.IsDeleted);
@@ -122,6 +160,11 @@ namespace SampleApp.Services
             return user;
         }
 
+        /// <summary>
+        /// Updates the specified user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task&lt;System.Boolean&gt;.</returns>
         public async Task<bool> Update(UserDto user)
         {
             var existUser = await GetUserById(user.Id);
@@ -138,6 +181,11 @@ namespace SampleApp.Services
             return true;
         }
 
+        /// <summary>
+        /// Deletes the specified user name.
+        /// </summary>
+        /// <param name="userName">Name of the user.</param>
+        /// <returns>Task&lt;System.Boolean&gt;.</returns>
         public async Task<bool> Delete(string userName)
         {
             var existUser = await _userReponsitory.SingleOrDefaultAsync(x => x.Username == userName && !x.IsDeleted);
@@ -150,6 +198,11 @@ namespace SampleApp.Services
             return true;
         }
 
+        /// <summary>
+        /// Deletes the specified user identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>Task&lt;System.Boolean&gt;.</returns>
         public async Task<bool> Delete(Guid userId)
         {
             var existUser = await GetUserById(userId);
@@ -162,12 +215,22 @@ namespace SampleApp.Services
             return true;
         }
 
+        /// <summary>
+        /// Gets the user by identifier.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>Task&lt;User&gt;.</returns>
         public async Task<User> GetUserById(Guid userId)
         {
             return
                 await _userReponsitory.SingleOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
         }
 
+        /// <summary>
+        /// Uploads the image.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns>Task&lt;ResponseUploadImageDto&gt;.</returns>
         public async Task<ResponseUploadImageDto> UploadImage(IFormFile file)
         {
             using (var stream = new MemoryStream())
@@ -192,6 +255,11 @@ namespace SampleApp.Services
             }
         }
 
+        /// <summary>
+        /// Updates the specified user.
+        /// </summary>
+        /// <param name="user">The user.</param>
+        /// <returns>Task.</returns>
         public async Task Update(User user)
         {
             await _userReponsitory.UpdateAsync(user);

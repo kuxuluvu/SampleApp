@@ -1,4 +1,17 @@
-﻿using AutoMapper;
+﻿// ***********************************************************************
+// Assembly         : SampleApp
+// Author           : duc.nguyen
+// Created          : 09-16-2019
+//
+// Last Modified By : duc.nguyen
+// Last Modified On : 09-16-2019
+// ***********************************************************************
+// <copyright file="MappingProfile.cs" company="SampleApp">
+//     Copyright (c) . All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using AutoMapper;
 using SampleApp.Infrastructure.Models;
 using SampleApp.Services.DTOs;
 using SampleApp.Services.Security;
@@ -6,8 +19,16 @@ using SampleApp.ViewModels;
 
 namespace SampleApp.Configs
 {
+    /// <summary>
+    /// Class MappingProfile.
+    /// Implements the <see cref="AutoMapper.Profile" />
+    /// </summary>
+    /// <seealso cref="AutoMapper.Profile" />
     public class MappingProfile : Profile
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MappingProfile"/> class.
+        /// </summary>
         public MappingProfile()
         {
             CreateMap<UserDto, UserViewModel>()

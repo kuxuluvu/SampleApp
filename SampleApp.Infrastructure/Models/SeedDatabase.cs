@@ -1,12 +1,32 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// ***********************************************************************
+// Assembly         : SampleApp.Infrastructure
+// Author           : duc.nguyen
+// Created          : 09-16-2019
+//
+// Last Modified By : duc.nguyen
+// Last Modified On : 09-16-2019
+// ***********************************************************************
+// <copyright file="SeedDatabase.cs" company="SampleApp.Infrastructure">
+//     Copyright (c) . All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using Microsoft.EntityFrameworkCore;
 using SampleApp.Infrastructure.Helper;
 using System;
 using System.Text;
 
 namespace SampleApp.Infrastructure.Models
 {
+    /// <summary>
+    /// Class SeedDatabase.
+    /// </summary>
     public static class SeedDatabase
     {
+        /// <summary>
+        /// Seeds the specified module builder.
+        /// </summary>
+        /// <param name="moduleBuilder">The module builder.</param>
         public static void Seed(this ModelBuilder moduleBuilder)
         {
             var user = new User()

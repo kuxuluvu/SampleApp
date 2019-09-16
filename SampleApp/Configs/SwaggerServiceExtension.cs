@@ -1,4 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿// ***********************************************************************
+// Assembly         : SampleApp
+// Author           : duc.nguyen
+// Created          : 09-16-2019
+//
+// Last Modified By : duc.nguyen
+// Last Modified On : 09-16-2019
+// ***********************************************************************
+// <copyright file="SwaggerServiceExtension.cs" company="SampleApp">
+//     Copyright (c) . All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -6,8 +19,16 @@ using System.Collections.Generic;
 
 namespace SampleApp.Configs
 {
+    /// <summary>
+    /// Class SwaggerServiceExtension.
+    /// </summary>
     public static class SwaggerServiceExtension
     {
+        /// <summary>
+        /// Adds the swagger documentation.
+        /// </summary>
+        /// <param name="services">The services.</param>
+        /// <returns>IServiceCollection.</returns>
         public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
@@ -38,6 +59,11 @@ namespace SampleApp.Configs
             return services;
         }
 
+        /// <summary>
+        /// Uses the swagger documentation.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <returns>IApplicationBuilder.</returns>
         public static IApplicationBuilder UseSwaggerDocumentation(this IApplicationBuilder app)
         {
             app.UseSwagger();
