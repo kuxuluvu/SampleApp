@@ -72,5 +72,11 @@ namespace SampleApp.Services
         /// <param name="user">The user.</param>
         /// <returns>Task.</returns>
         Task Update(User user);
+        /// <summary>
+        /// Uploads the photo.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <returns>Task&lt;ResponseUploadImageDto&gt;.</returns>
+        Task<ResponseUploadImageDto> UploadPhoto(IFormFile file);
     }
 }

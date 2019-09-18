@@ -22,10 +22,14 @@ using SampleApp.Infrastructure.Models;
 using SampleApp.Reponsitory.Intefaces;
 using SampleApp.Services.DTOs;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace SampleApp.Services
 {
@@ -188,12 +192,18 @@ namespace SampleApp.Services
         /// <returns>Task&lt;System.Boolean&gt;.</returns>
         public async Task<bool> Delete(string userName)
         {
-            var existUser = await _userReponsitory.SingleOrDefaultAsync(x => x.Username == userName && !x.IsDeleted);
 
-            if (existUser == null) return false;
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                var existUser = await _userReponsitory.SingleOrDefaultAsync(x => x.Username == userName && !x.IsDeleted);
 
-            existUser.IsDeleted = true;
-            await _userReponsitory.UpdateAsync(existUser);
+                if (existUser == null) return false;
+
+                existUser.IsDeleted = true;
+                await _userReponsitory.UpdateAsync(existUser);
+
+                scope.Complete();
+            }
 
             return true;
         }
@@ -205,12 +215,17 @@ namespace SampleApp.Services
         /// <returns>Task&lt;System.Boolean&gt;.</returns>
         public async Task<bool> Delete(Guid userId)
         {
-            var existUser = await GetUserById(userId);
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                var existUser = await GetUserById(userId);
 
-            if (existUser == null) return false;
+                if (existUser == null) return false;
 
-            existUser.IsDeleted = true;
-            await _userReponsitory.UpdateAsync(existUser);
+                existUser.IsDeleted = true;
+                await _userReponsitory.UpdateAsync(existUser);
+
+                scope.Complete();
+            }
 
             return true;
         }
@@ -250,6 +265,42 @@ namespace SampleApp.Services
 
                 var response = await client.ExecuteTaskAsync(request);
                 var result = JsonConvert.DeserializeObject<ResponseUploadImageDto>(response.Content);
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Uploads the image  - V2
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public async Task<ResponseUploadImageDto> UploadPhoto(IFormFile file)
+        {
+            using (var stream = new MemoryStream())
+            {
+                await file.CopyToAsync(stream);
+
+                var httpClient = new HttpClient();
+                var request = new HttpRequestMessage
+                {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(_appSettings.UrlUpload)
+                };
+
+                request.Headers.Add("Cache-Control", "no-cache");
+                request.Headers.Add("Accept", "*/*");
+                request.Headers.Add("Authorization", "Bearer " + _appSettings.TokenUpload);
+
+                var byteContent = new ByteArrayContent(stream.ToArray());
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+                request.Content = byteContent;
+
+                var response = await httpClient.SendAsync(request);
+
+                var stringResult = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<ResponseUploadImageDto>(stringResult);
 
                 return result;
             }

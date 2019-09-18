@@ -199,7 +199,7 @@ namespace SampleApp.Controllers
                     return BadRequest("Upload image failed");
                 }
 
-                var result = await _userServices.UploadImage(model.File);
+                var result = await _userServices.UploadPhoto(model.File);
 
                 if (result != null && result.Status == HttpStatusCode.OK)
                 {
